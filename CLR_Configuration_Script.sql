@@ -1,0 +1,60 @@
+USE [DOT]
+GO
+
+/****** Object:  Table [dbo].[CLR_Configuration]    Script Date: 10/14/2011 17:14:38 ******/
+
+----/*THIS SCRIPT WAS PUT TOGETHER TO SHOW CLR INSTALLATION STEPS 
+---- AND TEST THE CLR FOR DATA PUSH IN A TEST ENVIRONMENT 
+----*/
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+--CREATES CONFIGURATION TABLE WHICH WILL HOLD A SET OF CONFIGURATION.
+
+CREATE TABLE [dbo].[CLR_Configuration](
+	[key] [varchar](50) NOT NULL,
+	[value] [varchar](50) NOT NULL,
+	
+) ON [PRIMARY]
+
+GO
+
+INSERT INTO [dbo].CLR_Configuration ([key],value) VALUES('URL', 'http://localhost:1945/Home/Index')
+
+SET ANSI_PADDING OFF
+GO
+
+
+
+
+
+------ENABLE CLR INTEGRATION IN YOUR SQL ENVIRONMENT
+EXEC sp_configure 'clr enabled', '1'
+
+reconfigure
+
+------OTHER SETTINGS THAT MAY BE NEEDED
+
+ALTER DATABASE DOT SET TRUSTWORTHY ON
+
+
+CREATE ASSEMBLY VEHICLE_UPDATE_CLR
+FROM 'c:\ON_VEHICLE_UPDATE_CLR_LIB.dll'
+WITH PERMISSION_SET = EXTERNAL_ACCESS
+
+GO
+
+
+CREATE PROCEDURE SP_On_vehicleUpdate_clr(@vehicle_id integer)
+AS
+EXTERNAL NAME VEHICLE_UPDATE_CLR.[clr_Class].SP_On_vehicleUpdate_clr
+
+GO

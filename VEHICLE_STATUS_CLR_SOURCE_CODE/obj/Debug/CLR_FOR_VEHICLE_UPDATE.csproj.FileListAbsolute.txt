@@ -1,0 +1,5 @@
+C:\Users\Administrator\Desktop\DATA PUSH\VEHICLE_STATUS_CLR\bin\Debug\ON_VEHICLE_UPDATE_CLR_LIB.dll
+C:\Users\Administrator\Desktop\DATA PUSH\VEHICLE_STATUS_CLR\bin\Debug\ON_VEHICLE_UPDATE_CLR_LIB.pdb
+C:\Users\Administrator\Desktop\DATA PUSH\VEHICLE_STATUS_CLR\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Administrator\Desktop\DATA PUSH\VEHICLE_STATUS_CLR\obj\Debug\ON_VEHICLE_UPDATE_CLR_LIB.dll
+C:\Users\Administrator\Desktop\DATA PUSH\VEHICLE_STATUS_CLR\obj\Debug\ON_VEHICLE_UPDATE_CLR_LIB.pdb
