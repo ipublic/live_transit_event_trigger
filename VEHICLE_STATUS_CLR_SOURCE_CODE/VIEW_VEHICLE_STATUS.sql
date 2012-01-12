@@ -1,14 +1,3 @@
-USE [DOT]
-GO
-
-/****** Object:  View [dbo].[vehicle_status]    Script Date: 10/12/2011 14:34:57 ******/
-IF  EXISTS (SELECT * FROM sys.views WHERE object_id = OBJECT_ID(N'[dbo].[vehicle_status]'))
-DROP VIEW [dbo].[vehicle_status]
-GO
-
-USE [DOT]
-GO
-
 /****** Object:  View [dbo].[vehicle_status]    Script Date: 10/12/2011 14:34:57 ******/
 SET ANSI_NULLS ON
 GO
@@ -16,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-create view [dbo].[vehicle_status] as (
+CREATE VIEW [dbo].[vehicle_status] as (
 (SELECT  
 		v.vehicle_id,
 		v.loc_x AS 'latitude',
@@ -42,9 +31,10 @@ create view [dbo].[vehicle_status] as (
 		  CONVERT(VARCHAR(19), cps.incident_date_time, 102) + ' ' +
 		  CONVERT(VARCHAR(19), ctp.eta,108)
 		  ) AS DATETIME)
-		)
-		"last_scheduled_time",
-		cps.sched_time as "status_scheduled_time"
+		) as "last_scheduled_time",
+		cps.sched_time as "status_scheduled_time",
+		ctp.global_seq_num AS "previous_sequence",
+		ntp.global_seq_num as "next_sequence"
 	FROM 
 		dbo.current_performance_status cps
 	JOIN dbo.vehicle v
@@ -107,7 +97,9 @@ UNION
 		) as "next_scheduled_stop_time",
 		cps.incident_date_time,
 		null,
-		cps.sched_time
+		cps.sched_time,
+		null,
+		ntp.global_seq_num as "next_sequence"
 	FROM 
 		dbo.current_performance_status cps
 	JOIN dbo.vehicle v
@@ -160,7 +152,9 @@ UNION
 		  CONVERT(VARCHAR(19), ctp.eta,108)
 		  ) AS DATETIME)
 		) AS "last_scheduled_time",
-		cps.sched_time
+		cps.sched_time,
+	    ctp.global_seq_num AS "previous_sequence",
+		null
 	FROM 
 		dbo.current_performance_status cps
 	JOIN dbo.vehicle v

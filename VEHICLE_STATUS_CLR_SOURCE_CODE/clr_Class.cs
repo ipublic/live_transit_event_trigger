@@ -27,8 +27,7 @@ public partial class clr_Class
        string vehicleData = string.Empty;
         try
         {
-            SqlConnection conn = new SqlConnection();
-            conn.ConnectionString = "Context Connection=true";
+            SqlConnection conn = new SqlConnection("Context Connection=true");
 
             SqlCommand myCommand = conn.CreateCommand();
 

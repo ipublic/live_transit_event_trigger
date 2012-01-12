@@ -54,15 +54,15 @@
     <Compile Include="clr_Class.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Test Scripts\Test.sql">
-      <SubType>Content</SubType>
-    </Content>
+    <Content Include="CLR_Configuration_Script.sql" />
     <Content Include="PreDeployScript.sql">
       <SubType>Content</SubType>
     </Content>
     <Content Include="PostDeployScript.sql">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="TRIGGER_ON_UPDATE_VEHICLE.sql" />
+    <Content Include="VIEW_VEHICLE_STATUS.sql" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
