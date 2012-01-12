@@ -11,7 +11,7 @@ SET ANSI_PADDING ON
 GO
 
 -- Clean up all our old stuff
-IF  EXISTS (SELECT * FROM sys.triggers WHERE name = N'[dbo].[on_update_vehicle]')
+IF  EXISTS (SELECT * FROM sys.triggers WHERE name = N'on_update_vehicle')
 DROP TRIGGER [dbo].[on_update_vehicle]
 GO
 
@@ -220,12 +220,15 @@ GO
 
 ------ENABLE CLR INTEGRATION IN YOUR SQL ENVIRONMENT
 EXEC sp_configure 'clr enabled', '1'
+GO
 
 reconfigure
+GO
 
 ------OTHER SETTINGS THAT MAY BE NEEDED
 
 ALTER DATABASE DOT SET TRUSTWORTHY ON
+GO
 
 
 CREATE ASSEMBLY VEHICLE_UPDATE_CLR
