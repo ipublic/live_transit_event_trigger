@@ -1,9 +1,0 @@
-C:\Users\Administrator\Desktop\CLR\CLR_SOURCE_CODE\VEHICLE_STATUS_CLR\bin\Release\ON_VEHICLE_UPDATE_CLR_LIB.dll
-C:\Users\Administrator\Desktop\CLR\CLR_SOURCE_CODE\VEHICLE_STATUS_CLR\obj\Release\ResolveAssemblyReference.cache
-C:\Users\Administrator\Desktop\CLR\CLR_SOURCE_CODE\VEHICLE_STATUS_CLR\obj\Release\ON_VEHICLE_UPDATE_CLR_LIB.dll
-C:\Users\Administrator\Desktop\DATA PUSH\VEHICLE_STATUS_CLR\bin\Release\ON_VEHICLE_UPDATE_CLR_LIB.dll
-C:\Users\Administrator\Desktop\DATA PUSH\VEHICLE_STATUS_CLR\obj\Release\ResolveAssemblyReference.cache
-C:\Users\Administrator\Desktop\DATA PUSH\VEHICLE_STATUS_CLR\obj\Release\ON_VEHICLE_UPDATE_CLR_LIB.dll
-C:\Users\tlawore\Desktop\DATA PUSH\VEHICLE_STATUS_CLR\bin\Release\ON_VEHICLE_UPDATE_CLR_LIB.dll
-C:\Users\tlawore\Desktop\DATA PUSH\VEHICLE_STATUS_CLR\obj\Release\ResolveAssemblyReference.cache
-C:\Users\tlawore\Desktop\DATA PUSH\VEHICLE_STATUS_CLR\obj\Release\ON_VEHICLE_UPDATE_CLR_LIB.dll
