@@ -64,7 +64,7 @@ CREATE VIEW [dbo].[vehicle_status] as (
 		dbo.current_performance_status cps
 	JOIN dbo.trip t
 	    ON
-			cps.trip_id = t.trip_id		
+			cps.trip_id = t.trip_id and cps.sched_version = t.sched_version		
 	JOIN dbo.vehicle v
 		ON
 			cps.vehicle_id = v.vehicle_id
@@ -119,7 +119,7 @@ UNION
 		dbo.current_performance_status cps
 	JOIN dbo.trip t
 	    ON
-			cps.trip_id = t.trip_id		
+			cps.trip_id = t.trip_id and cps.sched_version = t.sched_version		
 	JOIN dbo.vehicle v
 		ON
 			cps.vehicle_id = v.vehicle_id
@@ -164,7 +164,7 @@ UNION
 		dbo.current_performance_status cps
 	JOIN dbo.trip t
 	    ON
-			cps.trip_id = t.trip_id
+			cps.trip_id = t.trip_id and cps.sched_version = t.sched_version
 	JOIN dbo.vehicle v
 		ON
 			cps.vehicle_id = v.vehicle_id
