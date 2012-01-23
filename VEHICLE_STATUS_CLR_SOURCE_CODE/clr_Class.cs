@@ -41,47 +41,46 @@ public partial class clr_Class
              DataSet myDataSet = new DataSet();
              mySqlDataAdapter.Fill(myDataSet);
 
-
-            //get URL from the database before closing the connection.
-             SqlCommand cmd = new SqlCommand(
-                "SELECT VALUE FROM [dbo].[CLR_Configuration] WHERE [key] = 'URL' ", conn);
-               url =  (string)cmd.ExecuteScalar();
-
-            //Not closing connection since we are using a context connection
-            //   conn.Close();
-
-             DataTable dt = new DataTable();
-            dt = (DataTable)myDataSet.Tables[0];
-
-            vehicleData = myDataSet.GetXml(); 
-       
-            //Creating HTTP post and sending data.
-            HttpWebRequest request = null;
-            HttpWebResponse response = null;
-            Stream stream = null;
-            StreamReader streamReader = null;
-
-            System.Text.ASCIIEncoding encoding = new System.Text.ASCIIEncoding();
-            Byte[] bytes = encoding.GetBytes(vehicleData);
+             if (myDataSet.Tables.Count > 0)
+             {
 
 
-            request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "POST";
-            request.ContentLength = bytes.Length;
-            request.ContentType = "text/xml";
-           
-            Stream dataStream = request.GetRequestStream();
-            dataStream.Write(bytes, 0, bytes.Length);
-            dataStream.Close();
+                 //get URL from the database before closing the connection.
+                 SqlCommand cmd = new SqlCommand(
+                    "SELECT VALUE FROM [dbo].[CLR_Configuration] WHERE [key] = 'URL' ", conn);
+                 url = (string)cmd.ExecuteScalar();
 
-            response = (HttpWebResponse)request.GetResponse();
-            stream = response.GetResponseStream();
-            streamReader = new StreamReader(stream);
+                 //Not closing connection since we are using a context connection
+                 //   conn.Close();
+                 vehicleData = myDataSet.GetXml();
 
-            response.Close();
-            stream.Dispose();
-            streamReader.Dispose();
+                 //Creating HTTP post and sending data.
+                 HttpWebRequest request = null;
+                 HttpWebResponse response = null;
+                 Stream stream = null;
+                 StreamReader streamReader = null;
 
+                 System.Text.ASCIIEncoding encoding = new System.Text.ASCIIEncoding();
+                 Byte[] bytes = encoding.GetBytes(vehicleData);
+
+
+                 request = (HttpWebRequest)WebRequest.Create(url);
+                 request.Method = "POST";
+                 request.ContentLength = bytes.Length;
+                 request.ContentType = "text/xml";
+
+                 Stream dataStream = request.GetRequestStream();
+                 dataStream.Write(bytes, 0, bytes.Length);
+                 dataStream.Close();
+
+                 response = (HttpWebResponse)request.GetResponse();
+                 stream = response.GetResponseStream();
+                 streamReader = new StreamReader(stream);
+
+                 response.Close();
+                 stream.Dispose();
+                 streamReader.Dispose();
+             }
         }
         catch (Exception ex)
         {

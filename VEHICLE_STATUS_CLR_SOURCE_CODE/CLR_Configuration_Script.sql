@@ -211,18 +211,24 @@ GO
 CREATE TRIGGER [dbo].[on_update_vehicle]
     ON [dbo].[vehicle]
     FOR  UPDATE
- AS
- DECLARE @vehicle_id int
-
-SET @vehicle_id = (SELECT vehicle_id FROM DELETED)
- BEGIN
-	IF @vehicle_id IS NOT NULL
-	    BEGIN
-	        --may decide to get the data on the fly and returning the data row to the CLR ; depends on performance analysis. 
-		    -- SELECT * FROM vehicle_status V WHERE V.vehicle_id = @vehicle_id
-		  
-		  EXEC SP_On_vehicleUpdate_clr @vehicle_id
-	  END 
+AS
+ DECLARE
+   @vehicle_id as int
+ BEGIN	  
+   DECLARE vehicle_cursor CURSOR
+   FOR select vehicle_id from inserted;
+   OPEN vehicle_cursor;
+   FETCH NEXT FROM vehicle_cursor
+   INTO @vehicle_id;
+   
+   WHILE @@FETCH_STATUS = 0
+   BEGIN
+		  EXEC SP_On_vehicleUpdate_clr @vehicle_id;
+		     FETCH NEXT FROM vehicle_cursor
+             INTO @vehicle_id;
+   END
+   CLOSE vehicle_cursor;
+   DEALLOCATE vehicle_cursor;
 END
 
 GO
