@@ -41,7 +41,7 @@ CREATE TABLE [dbo].[CLR_Configuration](
 
 GO
 
-INSERT INTO [dbo].CLR_Configuration ([key],value) VALUES('URL', 'http://localhost:1945/Home/Index')
+INSERT INTO [dbo].CLR_Configuration ([key],value) VALUES('URL', 'http://172.30.12.210:80/vehicle_positions.xml')
 GO
 
 SET ANSI_PADDING OFF
@@ -55,30 +55,16 @@ CREATE VIEW [dbo].[vehicle_status] as (
 		v.average_speed AS 'speed',
 		v.heading AS 'heading',
 		v.vehicle_position_date_time,
-		cps.direction_code_id as "route_direction",
-		cps.route_id,
-		cps.trip_id,
-		its.incident_desc,
+		LEFT(t.trip_id_external, LEN(t.trip_id_external) - 3) as "trip_id",
 		cps.deviation as "last_stop_deviation",
 		v.predicted_deviation,
-		ctp.bs_id as 'previous_stop_id',
-		ntp.bs_id as 'next_stop_id',
-		(CAST((
-		  CONVERT(VARCHAR(19), cps.incident_date_time, 102) + ' ' +
-		  CONVERT(VARCHAR(19), ntp.eta,108)
-		  ) AS DATETIME)
-		) as "next_scheduled_stop_time",
-		cps.incident_date_time,
-		(CAST((
-		  CONVERT(VARCHAR(19), cps.incident_date_time, 102) + ' ' +
-		  CONVERT(VARCHAR(19), ctp.eta,108)
-		  ) AS DATETIME)
-		) as "last_scheduled_time",
-		cps.sched_time as "status_scheduled_time",
 		ctp.global_seq_num AS "previous_sequence",
 		ntp.global_seq_num as "next_sequence"
 	FROM 
 		dbo.current_performance_status cps
+	JOIN dbo.trip t
+	    ON
+			cps.trip_id = t.trip_id		
 	JOIN dbo.vehicle v
 		ON
 			cps.vehicle_id = v.vehicle_id
@@ -110,12 +96,12 @@ CREATE VIEW [dbo].[vehicle_status] as (
 	        trip_timepoint.sched_version = cps.sched_version
 	        and
 	        trip_timepoint.global_seq_num >= ctp.global_seq_num
-	    )
-	JOIN incident_types its
-	  ON
-	    cps.incident_type = its.incident_type    	    
+	    )    	    
 	WHERE cps.next_tp_id <> 0 and cps.tp_id <> 0
-	and cps.vehicle_id <> 0 and v.logon_state = 1)
+	and cps.vehicle_id <> 0 and v.logon_state = 1
+	AND
+	  RIGHT(t.trip_id_external, 3) = '000'
+	)
 UNION
 (SELECT  
 		v.vehicle_id,
@@ -124,26 +110,16 @@ UNION
 		v.average_speed AS 'speed',
 		v.heading AS 'heading',
 		v.vehicle_position_date_time,
-		cps.direction_code_id as "route_direction",
-		cps.route_id,
-		cps.trip_id,
-		its.incident_desc,
+		LEFT(t.trip_id_external, LEN(t.trip_id_external) - 3) as "trip_id",
 		cps.deviation,
 		v.predicted_deviation,
-		null,
-		ntp.bs_id as "next_stop_id",
-		(CAST((
-		  CONVERT(VARCHAR(19), cps.incident_date_time, 102) + ' ' +
-		  CONVERT(VARCHAR(19), ntp.eta,108)
-		  ) AS DATETIME)
-		) as "next_scheduled_stop_time",
-		cps.incident_date_time,
-		null,
-		cps.sched_time,
 		null,
 		ntp.global_seq_num as "next_sequence"
 	FROM 
 		dbo.current_performance_status cps
+	JOIN dbo.trip t
+	    ON
+			cps.trip_id = t.trip_id		
 	JOIN dbo.vehicle v
 		ON
 			cps.vehicle_id = v.vehicle_id
@@ -165,12 +141,12 @@ UNION
 	        trip_timepoint.trip_id = cps.trip_id
 	        and
 	        trip_timepoint.sched_version = cps.sched_version
-	    )
-	JOIN incident_types its
-	  ON
-	    cps.incident_type = its.incident_type	  
+	    )  
 	WHERE cps.next_tp_id <> 0 and cps.tp_id = 0 
-	and cps.vehicle_id <> 0 and v.logon_state = 1)
+	and cps.vehicle_id <> 0 and v.logon_state = 1
+	AND
+	  RIGHT(t.trip_id_external, 3) = '000'
+	)
 UNION
 (SELECT  
 		v.vehicle_id,
@@ -179,26 +155,16 @@ UNION
 		v.average_speed AS 'speed',
 		v.heading AS 'heading',
 		v.vehicle_position_date_time,
-		cps.direction_code_id as "route_direction",
-		cps.route_id,
-		cps.trip_id,
-		its.incident_desc,
+		LEFT(t.trip_id_external, LEN(t.trip_id_external) - 3) as "trip_id",
 		cps.deviation,
 		v.predicted_deviation,
-		ctp.bs_id,
-		null as "next_stop_id",
-		null as "next_scheduled_stop_time",
-		cps.incident_date_time,
-		(CAST((
-		  CONVERT(VARCHAR(19), cps.incident_date_time, 102) + ' ' +
-		  CONVERT(VARCHAR(19), ctp.eta,108)
-		  ) AS DATETIME)
-		) AS "last_scheduled_time",
-		cps.sched_time,
 	    ctp.global_seq_num AS "previous_sequence",
 		null
 	FROM 
 		dbo.current_performance_status cps
+	JOIN dbo.trip t
+	    ON
+			cps.trip_id = t.trip_id
 	JOIN dbo.vehicle v
 		ON
 			cps.vehicle_id = v.vehicle_id
@@ -209,11 +175,10 @@ UNION
         cps.tp_id = ctp.tp_id
       AND
 		cps.sched_version = ctp.sched_version
-	JOIN incident_types its
-	  ON
-	    cps.incident_type = its.incident_type
 	WHERE cps.next_tp_id = 0 and cps.tp_id <> 0
 	and cps.vehicle_id <> 0 and v.logon_state = 1
+		AND
+	  RIGHT(t.trip_id_external, 3) = '000'
 )
 )
 GO
@@ -222,7 +187,7 @@ GO
 EXEC sp_configure 'clr enabled', '1'
 GO
 
-reconfigure
+RECONFIGURE WITH OVERRIDE
 GO
 
 ------OTHER SETTINGS THAT MAY BE NEEDED
