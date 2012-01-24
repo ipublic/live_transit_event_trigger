@@ -55,11 +55,12 @@ CREATE VIEW [dbo].[vehicle_status] as (
 		v.average_speed AS 'speed',
 		v.heading AS 'heading',
 		v.vehicle_position_date_time,
+		cps.incident_date_time AS 'incident_date_time',		
 		LEFT(t.trip_id_external, LEN(t.trip_id_external) - 3) as "trip_id",
 		cps.deviation as "last_stop_deviation",
 		v.predicted_deviation,
 		ctp.global_seq_num AS "previous_sequence",
-		ntp.global_seq_num as "next_sequence"
+		cps.sched_time as "last_scheduled_time"
 	FROM 
 		dbo.current_performance_status cps
 	JOIN dbo.trip t
@@ -110,11 +111,12 @@ UNION
 		v.average_speed AS 'speed',
 		v.heading AS 'heading',
 		v.vehicle_position_date_time,
+		cps.incident_date_time,
 		LEFT(t.trip_id_external, LEN(t.trip_id_external) - 3) as "trip_id",
 		cps.deviation,
 		v.predicted_deviation,
 		null,
-		ntp.global_seq_num as "next_sequence"
+		cps.sched_time as "last_scheduled_time"
 	FROM 
 		dbo.current_performance_status cps
 	JOIN dbo.trip t
@@ -155,11 +157,12 @@ UNION
 		v.average_speed AS 'speed',
 		v.heading AS 'heading',
 		v.vehicle_position_date_time,
+		cps.incident_date_time,
 		LEFT(t.trip_id_external, LEN(t.trip_id_external) - 3) as "trip_id",
 		cps.deviation,
 		v.predicted_deviation,
 	    ctp.global_seq_num AS "previous_sequence",
-		null
+		cps.sched_time as "last_scheduled_time"
 	FROM 
 		dbo.current_performance_status cps
 	JOIN dbo.trip t
