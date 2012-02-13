@@ -1,4 +1,4 @@
-USE [DOT]
+USE [DOT_TRN_SmartTraveler]
 GO
 
 SET ANSI_NULLS ON
@@ -11,6 +11,29 @@ SET ANSI_PADDING ON
 GO
 
 -- Clean up all our old stuff
+IF  EXISTS (SELECT * FROM msdb.dbo.sysschedules WHERE name = N'Send Vehicle Info Schedule')
+BEGIN
+EXEC msdb.dbo.sp_detach_schedule
+  @job_name = N'Send Vehicle Info to Live Transit API',
+  @schedule_name = N'Send Vehicle Info Schedule'
+;
+EXEC msdb.dbo.sp_delete_schedule
+  @schedule_name = N'Send Vehicle Info Schedule' ;
+END
+GO
+
+IF  EXISTS (SELECT * FROM msdb.dbo.sysjobs WHERE name = N'Send Vehicle Info to Live Transit API')
+BEGIN
+EXEC msdb.dbo.sp_delete_jobstep
+    @job_name = N'Send Vehicle Info to Live Transit API',
+	@step_id = 1
+	;
+
+EXEC msdb.dbo.sp_delete_job
+    @job_name = N'Send Vehicle Info to Live Transit API' ;
+END
+GO
+
 IF  EXISTS (SELECT * FROM sys.triggers WHERE name = N'on_update_vehicle')
 DROP TRIGGER [dbo].[on_update_vehicle]
 GO
@@ -41,7 +64,9 @@ CREATE TABLE [dbo].[CLR_Configuration](
 
 GO
 
-INSERT INTO [dbo].CLR_Configuration ([key],value) VALUES('URL', 'http://172.30.12.210:80/vehicle_positions.xml')
+-- production value: http://172.30.12.210:80/vehicle_positions.xml
+
+INSERT INTO [dbo].CLR_Configuration ([key],value) VALUES('URL', 'http://172.20.4.142:3000/vehicle_positions.xml')
 GO
 
 SET ANSI_PADDING OFF
@@ -195,7 +220,7 @@ GO
 
 ------OTHER SETTINGS THAT MAY BE NEEDED
 
-ALTER DATABASE DOT SET TRUSTWORTHY ON
+ALTER DATABASE DOT_TRN_SmartTraveler SET TRUSTWORTHY ON
 GO
 
 
@@ -205,12 +230,53 @@ WITH PERMISSION_SET = EXTERNAL_ACCESS
 GO
 
 
-CREATE PROCEDURE SP_On_vehicleUpdate_clr(@vehicle_id integer)
+CREATE PROCEDURE SP_On_vehicleUpdate_clr
 AS
 EXTERNAL NAME VEHICLE_UPDATE_CLR.[clr_Class].SP_On_vehicleUpdate_clr
 
 GO
 
+EXEC msdb.dbo.sp_add_job 
+	@job_name = N'Send Vehicle Info to Live Transit API',
+	@enabled = 1,
+	@start_step_id = 1,
+	@notify_level_eventlog = 3
+;
+GO
+
+EXEC msdb.dbo.sp_add_jobstep
+	@job_name = N'Send Vehicle Info to Live Transit API',
+	@step_name = N'Post Vehicle Data',
+	@step_id = 1,
+	@subsystem = 'TSQL',
+	@database_name = 'DOT_TRN_SmartTraveler',
+	@command = 'EXEC SP_On_vehicleUpdate_clr',
+	@flags = 32
+	;
+GO
+  
+
+EXEC msdb.dbo.sp_add_schedule
+  @schedule_name = N'Send Vehicle Info Schedule',
+  @freq_type = 4,
+  @freq_interval = 1,
+  @freq_subday_type = 2,
+  @freq_subday_interval = 10
+;
+GO
+
+EXEC msdb.dbo.sp_attach_schedule
+  @job_name = N'Send Vehicle Info to Live Transit API',
+  @schedule_name = N'Send Vehicle Info Schedule'
+;
+GO
+
+EXEC msdb.dbo.sp_add_jobserver
+  @job_name = N'Send Vehicle Info to Live Transit API'
+  ;
+GO
+
+/*
 CREATE TRIGGER [dbo].[on_update_vehicle]
     ON [dbo].[vehicle]
     FOR  UPDATE
@@ -235,3 +301,4 @@ AS
 END
 
 GO
+*/

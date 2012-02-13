@@ -19,7 +19,7 @@ public partial class clr_Class
     /// </summary>
     /// <param name="vehicleID"></param>
 [Microsoft.SqlServer.Server.SqlProcedure]
-    public static void SP_On_vehicleUpdate_clr(SqlInt32 vehicleID)
+    public static void SP_On_vehicleUpdate_clr()
     {
        
         string url = string.Empty;
@@ -31,8 +31,7 @@ public partial class clr_Class
 
             SqlCommand myCommand = conn.CreateCommand();
 
-            myCommand.CommandText = @"SELECT * FROM vehicle_status WHERE vehicle_id = @vehiclID";
-            myCommand.Parameters.AddWithValue("@vehiclID", vehicleID);
+            myCommand.CommandText = @"SELECT * FROM vehicle_status";
 
             conn.Open();
 
@@ -88,10 +87,6 @@ public partial class clr_Class
         }
      
     }
-
-
-
-  
 
 };
 
