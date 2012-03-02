@@ -66,7 +66,7 @@ GO
 
 -- production value: http://172.30.12.210:80/vehicle_positions.xml
 
-INSERT INTO [dbo].CLR_Configuration ([key],value) VALUES('URL', 'http://172.20.4.142:3000/vehicle_positions.xml')
+INSERT INTO [dbo].CLR_Configuration ([key],value) VALUES('URL', 'http://172.30.12.210:80/vehicle_positions.xml')
 GO
 
 SET ANSI_PADDING OFF

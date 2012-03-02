@@ -31,8 +31,10 @@ public partial class clr_Class
 
             SqlCommand myCommand = conn.CreateCommand();
 
-            myCommand.CommandText = @"SELECT * FROM vehicle_status";
-
+            myCommand.CommandText = @"SELECT * FROM vehicle_status where vehicle_position_date_time > @Limit";
+            SqlParameter myParameter = new SqlParameter("@Limit", SqlDbType.DateTime);
+            myParameter.Value = DateTime.Now.AddSeconds(-30);
+            myCommand.Parameters.Add(myParameter);
             conn.Open();
 
             SqlDataAdapter mySqlDataAdapter = new SqlDataAdapter();
@@ -67,6 +69,7 @@ public partial class clr_Class
                  request.Method = "POST";
                  request.ContentLength = bytes.Length;
                  request.ContentType = "text/xml";
+                 request.Timeout = 10000;
 
                  Stream dataStream = request.GetRequestStream();
                  dataStream.Write(bytes, 0, bytes.Length);
