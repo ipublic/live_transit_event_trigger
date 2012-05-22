@@ -25,16 +25,17 @@ public partial class clr_Class
         string url = string.Empty;
 
        string vehicleData = string.Empty;
-        try
-        {
             SqlConnection conn = new SqlConnection("Context Connection=true");
 
             SqlCommand myCommand = conn.CreateCommand();
-
-            myCommand.CommandText = @"SELECT * FROM vehicle_status where vehicle_position_date_time > @Limit";
-            SqlParameter myParameter = new SqlParameter("@Limit", SqlDbType.DateTime);
-            myParameter.Value = DateTime.Now.AddSeconds(-30);
-            myCommand.Parameters.Add(myParameter);
+            DateTime filter = DateTime.Now.AddSeconds(-30);
+            myCommand.CommandText = @"SELECT * FROM vehicle_status where (vehicle_position_date_time > @vptime) or (incident_date_time > @idt)";
+            SqlParameter vptime = new SqlParameter("@vptime", SqlDbType.DateTime);
+            vptime.Value = filter;
+            myCommand.Parameters.Add(vptime);
+            SqlParameter idt = new SqlParameter("@idt", SqlDbType.DateTime);
+            idt.Value = filter;
+            myCommand.Parameters.Add(idt);
             conn.Open();
 
             SqlDataAdapter mySqlDataAdapter = new SqlDataAdapter();
@@ -83,11 +84,6 @@ public partial class clr_Class
                  stream.Dispose();
                  streamReader.Dispose();
              }
-        }
-        catch (Exception ex)
-        {
-            SqlContext.Pipe.Send(ex.Message.ToString());
-        }
      
     }
 
