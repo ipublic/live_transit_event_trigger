@@ -64,9 +64,7 @@ CREATE TABLE [dbo].[CLR_Configuration](
 
 GO
 
--- production value: http://172.30.12.210:80/vehicle_positions.xml
-
-INSERT INTO [dbo].CLR_Configuration ([key],value) VALUES('URL', 'http://172.30.12.210:80/vehicle_positions.xml')
+INSERT INTO [dbo].CLR_Configuration ([key],value) VALUES('URL', 'http://localhost:3000/vehicle_positions.xml')
 GO
 
 SET ANSI_PADDING OFF
@@ -75,8 +73,8 @@ GO
 CREATE VIEW [dbo].[vehicle_status] as (
 (SELECT  
 		v.vehicle_id,
-		v.loc_x AS 'latitude',
-		v.loc_y AS 'longitude',
+		v.loc_x AS 'longitude',
+		v.loc_y AS 'latitude',
 		v.average_speed AS 'speed',
 		v.heading AS 'heading',
 		v.vehicle_position_date_time,
@@ -131,8 +129,8 @@ CREATE VIEW [dbo].[vehicle_status] as (
 UNION
 (SELECT  
 		v.vehicle_id,
-		v.loc_x AS 'latitude',
-		v.loc_y AS 'longitude',
+		v.loc_x AS 'longitude',
+		v.loc_y AS 'latitude',
 		v.average_speed AS 'speed',
 		v.heading AS 'heading',
 		v.vehicle_position_date_time,
@@ -177,8 +175,8 @@ UNION
 UNION
 (SELECT  
 		v.vehicle_id,
-		v.loc_x AS 'latitude',
-		v.loc_y AS 'longitude',
+		v.loc_x AS 'longitude',
+		v.loc_y AS 'latitude',
 		v.average_speed AS 'speed',
 		v.heading AS 'heading',
 		v.vehicle_position_date_time,
